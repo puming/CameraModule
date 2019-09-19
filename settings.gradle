@@ -1,1 +1,1 @@
-include ':app', ':cameraui'
+include ':app', ':cameraui', ':cameracore'

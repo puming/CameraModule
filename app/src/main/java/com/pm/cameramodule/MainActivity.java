@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.pm.cameraui.CameraActivity;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -132,8 +133,10 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
             case R.id.btn_capture:
+                startActivity(CameraActivity.newIntent(this,CameraActivity.TYPE_PICTURE));
                 break;
             case R.id.btn_record:
+                startActivity(CameraActivity.newIntent(this,CameraActivity.TYPE_VIDEO));
                 break;
         }
     }
