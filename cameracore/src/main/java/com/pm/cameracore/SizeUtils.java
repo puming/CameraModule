@@ -73,26 +73,33 @@ public class SizeUtils {
         return size;
     }
 
-    public static Size chooseOutputSize(Size[] sizes,Size customOutputSize,Size aspectRatio,boolean matchLargest ){
+    /**
+     * @param sizes            摄像头硬件支持的尺寸
+     * @param customOutputSize 自定义尺寸
+     * @param aspectRatio      纵横比尺寸
+     * @param matchLargest     true 匹配最大尺寸,false 匹配自定义尺寸
+     * @return
+     */
+    public static Size chooseOutputSize(Size[] sizes, Size customOutputSize, Size aspectRatio, boolean matchLargest) {
         List<Size> largests = new ArrayList<>(6);
         List<Size> leasts = new ArrayList<>(6);
         int h = aspectRatio.getHeight();
         int w = aspectRatio.getWidth();
         for (int i = 0; i < sizes.length; i++) {
             Size choices = sizes[i];
-            if(choices.getWidth()>= customOutputSize.getWidth()&& choices.getHeight()>= customOutputSize.getHeight()){
+            if (choices.getWidth() >= customOutputSize.getWidth() && choices.getHeight() >= customOutputSize.getHeight()) {
                 leasts.add(choices);
             }
-            if(choices.getHeight() == choices.getWidth() * h/w){
+            if (choices.getHeight() == choices.getWidth() * h / w) {
                 largests.add(choices);
             }
         }
 
-        if(!matchLargest){
-            return Collections.min(leasts,new CompareSizesByArea());
+        if (!matchLargest) {
+            return Collections.min(leasts, new CompareSizesByArea());
         }
 
-        if(!largests.isEmpty()){
+        if (!largests.isEmpty()) {
             return Collections.max(largests, new CompareSizesByArea());
         }
 

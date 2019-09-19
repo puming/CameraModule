@@ -385,6 +385,7 @@ public class CaptureDelegate {
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
 //                    showToast("失败");
+                    // TODO: 2019/9/19  
                 }
             }, mBackgroundHandler);
         } catch (CameraAccessException e) {
@@ -403,7 +404,7 @@ public class CaptureDelegate {
         for (Size size : outputPictureSizes) {
             Log.d(TAG, "prepareImageReader: largest=" + size.toString());
         }
-        Size outputSize = SizeUtils.chooseOutputSize(outputPictureSizes, new Size(1080, 23), new Size(16, 9), true);
+        Size outputSize = SizeUtils.chooseOutputSize(outputPictureSizes, new Size(1920, 1080), new Size(16, 9), true);
         mImageReader = ImageReader.newInstance(outputSize.getWidth(), outputSize.getHeight(), ImageFormat.JPEG, 2);
         mImageReader.setOnImageAvailableListener(reader -> {
             //step7 保存图片到外部存储私有目录

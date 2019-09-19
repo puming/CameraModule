@@ -57,7 +57,7 @@ public abstract class BaseCameraFragment extends Fragment implements TextureView
     }
 
     /**
-     *
+     * 打开相机前的准备，权限的检查
      */
     protected void onPrepareCamera(int width, int height) {
         ArrayList<String> permission = new ArrayList<String>(3);
@@ -78,7 +78,7 @@ public abstract class BaseCameraFragment extends Fragment implements TextureView
             requestCameraPermission((String[]) permission.toArray(new String[permission.size()]));
             return;
         }
-        openCamera(width,height);
+        openCamera(width, height);
     }
 
     /**

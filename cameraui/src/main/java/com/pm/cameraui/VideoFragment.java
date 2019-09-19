@@ -1,12 +1,18 @@
 package com.pm.cameraui;
 
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.VideoView;
 
+import com.pm.cameracore.DelegateCallback;
+import com.pm.cameracore.RecordDelegate;
 import com.pm.cameraui.widget.AutoFitTextureView;
 import com.pm.cameraui.widget.CameraController;
 import com.pm.cameraui.widget.CaptureButton;
@@ -19,11 +25,12 @@ import androidx.annotation.Nullable;
  * @date 2019/9/17
  * @email puming@zdsoft.cn
  */
-public class VideoFragment extends BaseCameraFragment {
+public class VideoFragment extends BaseCameraFragment implements DelegateCallback {
 
     private AutoFitTextureView mTextureView;
     private VideoView mVideoView;
     private CameraController mController;
+    private RecordDelegate mRecordDelegate;
 
     /**
      * Use this factory method to create a new instance of
@@ -60,7 +67,7 @@ public class VideoFragment extends BaseCameraFragment {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mVideoView = view.findViewById(R.id.videoView);
         mController = view.findViewById(R.id.controller);
-
+        mRecordDelegate = new RecordDelegate(getActivity(), this);
         mController.setTip("点击录制");
         mController.setDuration(10);
         mController.setAction(CaptureButton.Action.RECORD_VIDEO);
@@ -72,12 +79,12 @@ public class VideoFragment extends BaseCameraFragment {
 
             @Override
             public void recordStart() {
-
+                mRecordDelegate.startRecordingVideo();
             }
 
             @Override
             public void recordStop() {
-
+                mRecordDelegate.stopRecordingVideo();
             }
 
             @Override
@@ -92,7 +99,9 @@ public class VideoFragment extends BaseCameraFragment {
 
             @Override
             public void onClose() {
-
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
             }
         });
     }
@@ -100,6 +109,7 @@ public class VideoFragment extends BaseCameraFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mRecordDelegate.startBackgroundThread();
         if (mTextureView.isAvailable()) {
             onPrepareCamera(mTextureView.getWidth(), mTextureView.getHeight());
         } else {
@@ -108,11 +118,21 @@ public class VideoFragment extends BaseCameraFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mRecordDelegate.stopRecordingVideo();
+        closeCamera();
+        mRecordDelegate.stopBackgroundThread();
+    }
+
+    @Override
     protected void openCamera(int width, int height) {
+        mRecordDelegate.openCamera(width, height);
     }
 
     @Override
     protected void closeCamera() {
+        mRecordDelegate.closeCamera();
     }
 
     @Override
@@ -132,6 +152,31 @@ public class VideoFragment extends BaseCameraFragment {
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+    }
+
+    @Override
+    public void onChangeViewSize(Size size) {
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mTextureView.setAspectRatio(size.getWidth(), size.getHeight());
+        } else {
+            mTextureView.setAspectRatio(size.getHeight(), size.getWidth());
+        }
+    }
+
+    @Override
+    public void onTransformView(Matrix matrix) {
+        mTextureView.setTransform(matrix);
+    }
+
+    @Override
+    public SurfaceTexture getSurfaceTexture() {
+        return mTextureView.getSurfaceTexture();
+    }
+
+    @Override
+    public void onCaptureResult(Bitmap bitmap) {
 
     }
 }
