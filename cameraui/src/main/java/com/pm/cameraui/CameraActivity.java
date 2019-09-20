@@ -57,4 +57,11 @@ public class CameraActivity extends AppCompatActivity {
             decorView.setSystemUiVisibility(option);
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        //关闭窗体动画显示
+        this.overridePendingTransition(0, R.anim.activity_down_slid);
+    }
 }

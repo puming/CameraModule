@@ -9,6 +9,7 @@ import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.pm.cameracore.DelegateCallback;
@@ -16,6 +17,7 @@ import com.pm.cameracore.RecordDelegate;
 import com.pm.cameraui.widget.AutoFitTextureView;
 import com.pm.cameraui.widget.CameraController;
 import com.pm.cameraui.widget.CaptureButton;
+import com.pm.cameraui.widget.VideoViewController;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +30,7 @@ import androidx.annotation.Nullable;
 public class VideoFragment extends BaseCameraFragment implements DelegateCallback {
 
     private AutoFitTextureView mTextureView;
-    private VideoView mVideoView;
+    private VideoViewController mVideoViewController;
     private CameraController mController;
     private RecordDelegate mRecordDelegate;
 
@@ -65,8 +67,8 @@ public class VideoFragment extends BaseCameraFragment implements DelegateCallbac
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        mVideoView = view.findViewById(R.id.videoView);
         mController = view.findViewById(R.id.controller);
+        mVideoViewController = view.findViewById(R.id.vv_controller);
         mRecordDelegate = new RecordDelegate(getActivity(), this);
         mController.setTip("点击录制");
         mController.setDuration(10);
@@ -84,17 +86,17 @@ public class VideoFragment extends BaseCameraFragment implements DelegateCallbac
 
             @Override
             public void recordStop() {
-                mRecordDelegate.stopRecordingVideo();
+                mRecordDelegate.stopRecordingVideo(false);
             }
 
             @Override
             public void onCancel() {
-
+                mVideoViewController.hide();
             }
 
             @Override
             public void onConfirm() {
-
+                mVideoViewController.hide();
             }
 
             @Override
@@ -120,9 +122,10 @@ public class VideoFragment extends BaseCameraFragment implements DelegateCallbac
     @Override
     public void onPause() {
         super.onPause();
-        mRecordDelegate.stopRecordingVideo();
+        mRecordDelegate.stopRecordingVideo(true);
         closeCamera();
         mRecordDelegate.stopBackgroundThread();
+        mVideoViewController.hide();
     }
 
     @Override
@@ -178,5 +181,10 @@ public class VideoFragment extends BaseCameraFragment implements DelegateCallbac
     @Override
     public void onCaptureResult(Bitmap bitmap) {
 
+    }
+
+    @Override
+    public void onRecordResult(Bitmap coverBitmap, String videoAbsolutePath) {
+        mVideoViewController.show(coverBitmap,videoAbsolutePath);
     }
 }

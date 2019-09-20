@@ -51,6 +51,7 @@ public class RecordDelegate implements CameraDelegate {
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
+
     static {
         DEFAULT_ORIENTATIONS.append(Surface.ROTATION_0, 90);
         DEFAULT_ORIENTATIONS.append(Surface.ROTATION_90, 0);
@@ -64,6 +65,7 @@ public class RecordDelegate implements CameraDelegate {
         INVERSE_ORIENTATIONS.append(Surface.ROTATION_180, 90);
         INVERSE_ORIENTATIONS.append(Surface.ROTATION_270, 0);
     }
+
     private Context mContext;
     private DelegateCallback mCallback;
     private CameraManager mCameraManager;
@@ -378,8 +380,12 @@ public class RecordDelegate implements CameraDelegate {
         }
     }
 
-    public void stopRecordingVideo() {
-        if(!mIsRecordingVideo){
+    /**
+     * 停止录制
+     * @param isQuit true 完全退出 false 没有完全退出，回到预览状态
+     */
+    public void stopRecordingVideo(boolean isQuit) {
+        if (!mIsRecordingVideo) {
             return;
         }
         mIsRecordingVideo = false;
@@ -388,11 +394,12 @@ public class RecordDelegate implements CameraDelegate {
         mMediaRecorder.reset();
         mMediaRecorder.release();
         mMediaRecorder = null;
-
-        Toast.makeText(mContext, "Video saved: " + mNextVideoAbsolutePath,
-                Toast.LENGTH_SHORT).show();
+        mCallback.onRecordResult(null, mNextVideoAbsolutePath);
         Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
 //        mNextVideoAbsolutePath = null;
+        if (isQuit) {
+            return;
+        }
         createCameraPreviewSession(mCameraDevice);
     }
 

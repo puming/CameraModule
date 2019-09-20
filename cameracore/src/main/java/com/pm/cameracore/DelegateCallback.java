@@ -15,4 +15,5 @@ public interface DelegateCallback {
     void onTransformView(Matrix matrix);
     SurfaceTexture getSurfaceTexture();
     void onCaptureResult(Bitmap bitmap);
+    void onRecordResult(Bitmap coverBitmap,String videoAbsolutePath);
 }

@@ -217,4 +217,8 @@ public class PictureFragment extends BaseCameraFragment implements DelegateCallb
         mController.startAlphaAnimation();
         mController.startTypeBtnAnimator();
     }
+
+    @Override
+    public void onRecordResult(Bitmap coverBitmap, String videoAbsolutePath) {
+    }
 }

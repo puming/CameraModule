@@ -167,20 +167,20 @@ public class CameraController extends FrameLayout {
     private void registerListener() {
         mBtnCapture.setCaptureListener(new CaptureButton.CaptureListener() {
             @Override
-            public void takePictures() {
+            public void onTakePicture() {
                 if (mCallback != null) {
                     mCallback.takePicture();
                 }
             }
 
             @Override
-            public void recordShort(long time) {
+            public void onRecordShort(long time) {
                 // TODO: 2019/9/18
                 startAlphaAnimation();
             }
 
             @Override
-            public void recordStart() {
+            public void onRecordStart() {
                 if (mCallback != null) {
                     mCallback.recordStart();
                 }
@@ -189,7 +189,7 @@ public class CameraController extends FrameLayout {
             }
 
             @Override
-            public void recordEnd(long time) {
+            public void onRecordStop(long time) {
                 if (mCallback != null) {
                     mCallback.recordStop();
                 }
@@ -198,12 +198,12 @@ public class CameraController extends FrameLayout {
             }
 
             @Override
-            public void recordZoom(float zoom) {
+            public void onRecordZoom(float zoom) {
                 // TODO: 2019/9/18
             }
 
             @Override
-            public void recordError() {
+            public void onRecordError() {
                 // TODO: 2019/9/18
             }
         });
@@ -304,8 +304,13 @@ public class CameraController extends FrameLayout {
         animator_txt_tip.start();
     }
 
+    /**
+     * 设置录制时长，单位秒
+     *
+     * @param duration
+     */
     public void setDuration(int duration) {
-        mBtnCapture.setDuration(duration);
+        mBtnCapture.setMaxDuration(duration);
     }
 
     public void setButtonFeatures(int state) {
