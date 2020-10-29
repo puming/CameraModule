@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 28
@@ -33,4 +34,66 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(path: ':cameracore')
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                group = 'com.github.puming'
+                artifactId = 'CameraModule'
+                version = '0.0.1'
+
+                // Adds javadocs and sources as separate jars.
+                artifact androidJavadocsJar
+                artifact(sourceJar)
+
+                pom {
+                    name = 'CameraModule'
+                    description = '一个支持拍照，录像的易用的相机模块'
+                    url = 'https://github.com/puming/CameraModule'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'puming'
+                            name = 'Pu Ming'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git@github.com/puming/CameraModule.git'
+                        developerConnection = 'scm:git@github.com/puming/CameraModule.git'
+                        url = 'https://github.com/puming/CameraModule'
+                    }
+                }
+            }
+        }
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompileProvider.get().classpath
+        }
+    }
+    exclude '**/R.html', '**/R.*.html', '**/index.html'
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    archiveClassifier.set('javadoc')
+    from androidJavadocs.destinationDir
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
 }
