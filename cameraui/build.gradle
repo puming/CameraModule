@@ -26,6 +26,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    //避免javadoc的检查，防止上传时报错
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+    }
 }
 
 dependencies {
@@ -33,7 +39,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation project(path: ':cameracore')
+    api project(path: ':cameracore')
 }
 
 afterEvaluate {
