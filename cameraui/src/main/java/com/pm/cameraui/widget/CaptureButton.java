@@ -502,7 +502,9 @@ public class CaptureButton extends View {
      */
     public void resetState() {
         mButtonState = STATE_IDLE;
-        timer.cancel();
+        if(null != timer){
+            timer.cancel();
+        }
     }
 
     /**

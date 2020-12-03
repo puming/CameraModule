@@ -115,7 +115,7 @@ public class PictureFragment extends BaseCameraFragment implements DelegateCallb
             @Override
             public void onClose() {
                 if (getActivity() != null) {
-                    getActivity().finish();
+                    getActivity().finishAfterTransition();
                 }
             }
         });
